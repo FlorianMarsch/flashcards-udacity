@@ -11,6 +11,7 @@ import { Card } from 'react-native-elements'
 import Button from './Button';
 
 import { getDeck } from '../api'
+import { clearNotification } from '../api/notification'
 
 class QuizView extends Component {
 
@@ -102,22 +103,29 @@ class QuizView extends Component {
     }
 
     correct = () => {
-        this.setState(
-            {
-                index: this.state.index + 1,
-                correctAnswers: this.state.correctAnswers + 1,
-                flipped: false
-            });
+        this.setState({
+            index: this.state.index + 1,
+            correctAnswers: this.state.correctAnswers + 1,
+            flipped: false
+        });
+        checkIfFinished();
     }
 
     incorrect = () => {
-        this.setState(
-            {
-                index: this.state.index + 1,
-                flipped: false
-            });
+        this.setState({
+            index: this.state.index + 1,
+            flipped: false
+        });
+        checkIfFinished();
     }
 
+
+    checkIfFinished = () => {
+        if (this.state.index === this.state.deck.questions.length) {
+            clearNotification();
+        }
+
+    }
 }
 
 

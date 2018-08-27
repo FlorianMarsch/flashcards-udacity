@@ -16,10 +16,25 @@ let scheduleNotification = (nextNotification) => {
         },
         {
             time: nextNotification,
-            repeat: 'minute',
-            //repeat: 'day',
+            repeat: 'day',
         }
     );
+}
+
+let alert = (status) => {
+    Alert.alert(
+        'Cannot apply Notification',
+        'Please grant permission! status = ' + status
+    )
+}
+
+export const clearNotification = () => {
+    /*
+    It'd be a good idea to create a function to clear all notifications. That way, you could reset the schedule when a Quiz is finished, setting it again from the next day on.
+    */
+
+    AsyncStorage.setItem(NOTIFICATION_KEY, false);
+    enableNotification();
 }
 
 export const enableNotification = () => {
@@ -27,8 +42,8 @@ export const enableNotification = () => {
         .then((alreadyNotified) => {
             let nextNotification = new Date();
             if (!alreadyNotified) {
-                const oneMinute = 60 * 1000;
-                nextNotification.setTime(nextNotification.getTime() + oneMinute);
+                const oneDay = 1000 * 60 * 60 * 24;
+                nextNotification.setTime(nextNotification.getTime() + oneDay);
                 AsyncStorage.setItem(NOTIFICATION_KEY, 'started');
             }
             Permissions.askAsync(Permissions.NOTIFICATIONS)
@@ -36,10 +51,7 @@ export const enableNotification = () => {
                     if (status === 'granted') {
                         scheduleNotification(nextNotification);
                     } else {
-                        Alert.alert(
-                            'Cannot apply Notification',
-                            'Please grant permission! status = ' + status
-                        )
+                        alert(status);
                     }
 
                     // why undertermined?
